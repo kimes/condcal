@@ -59,7 +59,7 @@ public class CondCal {
             }
         }
 
-        return 0;
+        return v;
     }
 
     private boolean checkCondition(String condition, JSONObject params) throws CondCalException {
