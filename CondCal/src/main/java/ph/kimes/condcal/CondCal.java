@@ -15,8 +15,8 @@ import java.util.regex.Pattern;
 public class CondCal {
 
     private static final String REGEX_QUOTATIONS =
-            "(\\(\\([a-zA-Z0-9=<>&()]{1,}\\)=\\([a-zA-Z0-9.+\\-*/]{1,}\\)\\))(>>|){1,}",
-        REGEX_CONDITION_VALUE = "\\(\\((.{1,})\\)=\\((.{1,})\\)\\)",
+            "(\\(\\([a-zA-Z0-9=<>&()]{1,}\\)=\\([a-zA-Z0-9.+\\-*/]{1,}\\)\\))(\\^\\^|){1,}",
+        REGEX_CONDITION_VALUE = "\\(\\((\\(|)((Date|Number|)([a-zA-Z0-9=<>&()]{1,}))(\\)|)\\)=\\(([a-zA-Z0-9.+\\-*/]{1,})\\)\\)",
         REGEX_CONDITION = "((Date|Number|)(\\(|)([\\w-]{1,})(==|!=|>|>=|<|<=)([\\w-]{1,})(\\)|))(&&|\\|\\||){1,}";
 
     private static final String REGEX_HAS_PARENTHESIS = "\\((.{1,})\\)",
@@ -43,8 +43,8 @@ public class CondCal {
             Pattern patternConditionValue = Pattern.compile(REGEX_CONDITION_VALUE);
             Matcher matcherConditionValue = patternConditionValue.matcher(conditionValue);
             if (matcherConditionValue.matches()) {
-                String condition = matcherConditionValue.group(1),
-                        value = matcherConditionValue.group(2);
+                String condition = matcherConditionValue.group(2),
+                        value = matcherConditionValue.group(6);
 
                 System.out.println("CHECKING: " + condition);
                 if (checkCondition(condition, parameters)) {
@@ -80,7 +80,7 @@ public class CondCal {
                 else param1 = paramName1;
 
                 if (params.has(paramName2)) param2 = params.getString(paramName2);
-                else param1 = paramName1;
+                else param2 = paramName2;
             } catch (JSONException e) {
                 e.printStackTrace();
             }
