@@ -77,7 +77,10 @@ public class CondCal {
             String param1 = "", param2 = "";
             try {
                 if (params.has(paramName1)) param1 = params.getString(paramName1);
+                else param1 = paramName1;
+
                 if (params.has(paramName2)) param2 = params.getString(paramName2);
+                else param1 = paramName1;
             } catch (JSONException e) {
                 e.printStackTrace();
             }
