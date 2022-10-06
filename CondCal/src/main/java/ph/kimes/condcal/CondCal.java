@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 public class CondCal {
 
     private static final String REGEX_QUOTATIONS =
-            "(\\(\\([a-zA-Z0-9=<>&]{1,}\\)=\\([a-zA-Z0-9.+\\-*/]{1,}\\)\\))(>>|){1,}",
+            "(\\(\\([a-zA-Z0-9=<>&()]{1,}\\)=\\([a-zA-Z0-9.+\\-*/]{1,}\\)\\))(>>|){1,}",
         REGEX_CONDITION_VALUE = "\\(\\((.{1,})\\)=\\((.{1,})\\)\\)",
         REGEX_CONDITION = "((Date|Number|)(\\(|)([\\w-]{1,})(==|!=|>|>=|<|<=)([\\w-]{1,})(\\)|))(&&|\\|\\||){1,}";
 
