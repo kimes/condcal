@@ -14,15 +14,20 @@ import java.util.regex.Pattern;
 
 public class CondCal {
 
+    // EXAMPLE
+    // ((Date(oTripDate==nTripDate)&&oOrigin==nOrigin)=(0))^^((Number(1==1))=(tCharge))
+    // ((<CONDITIONS>)=(<VALUE>))
+
     private static final String REGEX_QUOTATIONS =
-            "(\\(\\([a-zA-Z0-9=<>&()]{1,}\\)=\\([a-zA-Z0-9.+\\-*/]{1,}\\)\\))(\\^\\^|){1,}",
-        REGEX_CONDITION_VALUE = "\\(\\((\\(|)((Date|Number|)([a-zA-Z0-9=<>&()]{1,}))(\\)|)\\)=\\(([a-zA-Z0-9.+\\-*/]{1,})\\)\\)",
-        REGEX_CONDITION = "((Date|Number|)(\\(|)([\\w-]{1,})(==|!=|>|>=|<|<=)([\\w-]{1,})(\\)|))(&&|\\|\\||){1,}";
+            "(\\(\\([a-zA-Z0-9=<>&() ]{1,}\\)=\\([a-zA-Z0-9.+\\-*/]{1,}\\)\\))(\\^\\^|){1,}",
+        REGEX_CONDITION_VALUE = "\\(\\((\\(|)((Date|Number|)([a-zA-Z0-9=<>&() ]{1,}))(\\)|)\\)=\\(([a-zA-Z0-9.+\\-*/]{1,})\\)\\)",
+        REGEX_CONDITION = "((Date|Number|)(\\(|)([\\w- ]{1,})(==|!=|>|>=|<|<=)([\\w- ]{1,})(\\)|))(&&|\\|\\||){1,}";
 
     private static final String REGEX_HAS_PARENTHESIS = "\\((.{1,})\\)",
         REGEX_PARENTHESIS = "\\((((-|)\\d{1,}((?=\\.)\\.\\d{1,}|)((?=[+\\-*/])[+\\-*/]{1})){1,}(-|)\\d{1,}((?=\\.)\\.\\d{1,}|))\\)",
         REGEX_MUL_DIV = "(((?=[+\\-*/])[+\\-]{0,}|(?=^)[+\\-]{0,})\\d+(\\.(?=\\d)|)\\d{0,})([*/]{1})(((?=[+\\-*/])[+\\-]{0,}|)\\d+(\\.(?=\\d)|)\\d{0,})",
-        REGEX_ADD_SUB = "(((?=[+\\-*/])[+\\-]{0,}|(?=^)[+\\-]{0,})\\d+(\\.(?=\\d)|)\\d{0,})([+\\-]{1})(((?=[+\\-*/])[+\\-]{0,}|)\\d+(\\.(?=\\d)|)\\d{0,})";
+        REGEX_ADD_SUB = "(((?=[+\\-*/])[+\\-]{0,}|(?=^)[+\\-]{0,})\\d+(\\.(?=\\d)|)\\d{0,})([+\\-]{1})(((?=[+\\-*/])[+\\-]{0,}|)\\d+(\\.(?=\\d)|)\\d{0,})",
+        REGEX_MATH_FUNCTIONS = "()";
 
     private String condCal = "";
     private JSONObject parameters = new JSONObject();
@@ -44,7 +49,7 @@ public class CondCal {
             Matcher matcherConditionValue = patternConditionValue.matcher(conditionValue);
             if (matcherConditionValue.matches()) {
                 String condition = matcherConditionValue.group(2),
-                        value = matcherConditionValue.group(6);
+                    value = matcherConditionValue.group(6);
 
                 System.out.println("CHECKING: " + condition);
                 if (checkCondition(condition, parameters)) {
