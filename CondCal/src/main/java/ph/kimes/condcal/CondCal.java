@@ -19,8 +19,8 @@ public class CondCal {
     // ((<CONDITIONS>)=(<VALUE>))
 
     private static final String REGEX_QUOTATIONS =
-            "(\\(\\([a-zA-Z0-9=<>&() ]{1,}\\)=\\([a-zA-Z0-9.+\\-*/]{1,}\\)\\))(\\^\\^|){1,}",
-        REGEX_CONDITION_VALUE = "\\(\\((\\(|)((Date|Number|)([a-zA-Z0-9=<>&() ]{1,}))(\\)|)\\)=\\(([a-zA-Z0-9.+\\-*/]{1,})\\)\\)",
+            "(\\(\\([a-zA-Z0-9=<>&() ]{1,}\\)=\\([a-zA-Z0-9.+\\-*/()]{1,}\\)\\))(\\^\\^|){1,}",
+        REGEX_CONDITION_VALUE = "\\(\\((\\(|)((Date|Number|)([a-zA-Z0-9=<>&() ]{1,}))(\\)|)\\)=\\(([a-zA-Z0-9.+\\-*/()]{1,})\\)\\)",
         REGEX_CONDITION = "((Date|Number|)(\\(|)([\\w- ]{1,})(==|!=|>|>=|<|<=)([\\w- ]{1,})(\\)|))(&&|\\|\\||){1,}";
 
     private static final String REGEX_HAS_PARENTHESIS = "\\((.{1,})\\)",
@@ -47,6 +47,8 @@ public class CondCal {
 
             Pattern patternConditionValue = Pattern.compile(REGEX_CONDITION_VALUE);
             Matcher matcherConditionValue = patternConditionValue.matcher(conditionValue);
+
+            System.out.println("CONDITION VALUE: " + conditionValue + " | " + matcherConditionValue.matches());
             if (matcherConditionValue.matches()) {
                 String condition = matcherConditionValue.group(2),
                     value = matcherConditionValue.group(6);
@@ -173,6 +175,8 @@ public class CondCal {
         for (int i = 0; i < allGrants.size(); i++) {
             if (!allGrants.get(i)) allGranted = false;
         }
+
+        System.out.println("GRANTED? " + allGranted);
         return allGranted;
     }
 
@@ -202,7 +206,8 @@ public class CondCal {
             nFormula = nFormula.substring(0, iMatch.start()) + iValue + nFormula.substring(iMatch.start());
         }
 
-        System.out.println("FORMULA: " + nFormula + " = " + getValueInParenthesis(nFormula));
+        System.out.println("FORMULA: " + nFormula);
+        //System.out.println("FORMULA: " + nFormula + " = " + getValueInParenthesis(nFormula));
         return getValueInParenthesis(nFormula);
     }
 
@@ -214,22 +219,28 @@ public class CondCal {
                 patternAddSub = Pattern.compile(REGEX_ADD_SUB);
 
         // PARENTHESIS
-        while (Pattern.matches(REGEX_HAS_PARENTHESIS, nFormula)) {
+
+        Pattern patternHasParenthesis = Pattern.compile(REGEX_HAS_PARENTHESIS);
+        Matcher matcherHasParenthesis = patternHasParenthesis.matcher(nFormula);
+        while (matcherHasParenthesis.find()) {
             ArrayList<MatchResult> matches = new ArrayList<>();
 
             Matcher matcher = patternParenthesis.matcher(nFormula);
             while (matcher.find()) {
                 matches.add(matcher.toMatchResult());
             }
+
             for (int i = matches.size() - 1; i >= 0; i--) {
                 MatchResult iMatch = matches.get(i);
 
-                double iValue = getValueInParenthesis(nFormula);
+                double iValue = getValueInParenthesis(iMatch.group(1));
 
                 nFormula = nFormula.substring(0, iMatch.start()) +
                         nFormula.substring(iMatch.start() + iMatch.group().length());
                 nFormula = nFormula.substring(0, iMatch.start()) + iValue + nFormula.substring(iMatch.start());
             }
+
+            matcherHasParenthesis = patternHasParenthesis.matcher(nFormula);
         }
 
         double iValue = 0d;
